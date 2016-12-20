@@ -1,6 +1,7 @@
 package com.example.guest.whereismycar.ui;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.provider.SyncStateContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.guest.whereismycar.Constants;
@@ -29,9 +31,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Bind(R.id.vehicleLocationButton) Button mVehicleLocationButton;
     @Bind(R.id.vehicleNameEditText) EditText mVehicleNameEditText;
     @Bind(R.id.vehicleDescriptionEditText) EditText mVehicleDescriptionEditText;
+    @Bind(R.id.imageTextView) TextView mImageTextView;
+    @Bind(R.id.vehicleNameTextView) TextView mVehicleNameTextView;
+    @Bind(R.id.vehicleDescriptionTextView) TextView mVehicleDescriptionTextView;
 
     private Vehicle mVehicle;
-
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -41,6 +45,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        Typeface captureFont = Typeface.createFromAsset(getAssets(), "fonts/Capture_if.ttf");
+        mSaveVehicleButton.setTypeface(captureFont);
+        mVehicleLocationButton.setTypeface(captureFont);
+        mVehicleNameEditText.setTypeface(captureFont);
+        mVehicleDescriptionEditText.setTypeface(captureFont);
+        mImageTextView.setTypeface(captureFont);
+        mVehicleNameTextView.setTypeface(captureFont);
+        mVehicleDescriptionTextView.setTypeface(captureFont);
 
         mSaveVehicleButton.setOnClickListener(this);
         mVehicleLocationButton.setOnClickListener(this);
