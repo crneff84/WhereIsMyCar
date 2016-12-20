@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1018098619085",
+    "firebase_url": "https://whereismycar-64a26.firebaseio.com",
+    "project_id": "whereismycar-64a26",
+    "storage_bucket": "whereismycar-64a26.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1018098619085:android:1d0cb52e8fb330c7",
+        "android_client_info": {
+          "package_name": "com.example.guest.whereismycar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1018098619085-j0bo22kc81dt6noabrs4nbbl7blcb31e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.guest.whereismycar",
+            "certificate_hash": "55C87E830E3E4DCC8974E493C07BE39B7FDB994D"
+          }
+        },
+        {
+          "client_id": "1018098619085-o8d4fibh7l9nbdt98kid80cq5i3rn7ar.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCN9mbfCRHjbs2YEXfiISzYAl-drIJd7WQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1018098619085-o8d4fibh7l9nbdt98kid80cq5i3rn7ar.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
