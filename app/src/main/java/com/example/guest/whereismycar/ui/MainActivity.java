@@ -10,10 +10,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.guest.whereismycar.Constants;
 import com.example.guest.whereismycar.R;
+import com.example.guest.whereismycar.models.Vehicle;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -25,6 +27,11 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     @Bind(R.id.saveVehicleButton) Button mSaveVehicleButton;
     @Bind(R.id.vehicleLocationButton) Button mVehicleLocationButton;
+    @Bind(R.id.vehicleNameEditText) EditText mVehicleNameEditText;
+    @Bind(R.id.vehicleDescriptionEditText) EditText mVehicleDescriptionEditText;
+
+    private Vehicle mVehicle;
+
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -57,6 +64,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(view == mSaveVehicleButton) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             String uid = user.getUid();
+            String vehicleName = mVehicleNameEditText.getText().toString();
+            String vehicleDescription = mVehicleDescriptionEditText.getText().toString();
+
+            mVehicle = new Vehicle(vehicleName, vehicleDescription, vehicleImage, coordinates);
+
             DatabaseReference vehicleRef = FirebaseDatabase
                     .getInstance()
                     .getReference(Constants.FIREBASE_CHILD_VEHICLES)
@@ -67,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mVehicle.setPushId(pushId);
             pushRef.setValue(mVehicle);
 
-            Toast.makeText(getContext(), "Saved", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "Saved", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -13,8 +13,8 @@ public class Vehicle {
     public Vehicle(String vehicleName, String vehicleDescription, String vehicleImage, String coordinates) {
         this.vehicleName = vehicleName;
         this.vehicleDescription = vehicleDescription;
-        this.vehicleImage = vehicleImage;
-        this.coordinates = coordinates;
+        this.vehicleImage = "not_specified";
+        this.coordinates = "not_specified";
     }
 
     public Vehicle() {}
@@ -39,7 +39,15 @@ public class Vehicle {
         return pushId;
     }
 
-    public void setPushId() {
+    public void setPushId(String pushId) {
         this.pushId = pushId;
+    }
+
+    public void setVehicleImage(String vehicleImage) {
+        this.vehicleImage = vehicleImage;
+    }
+
+    public void setCoordinates(String coordinates) {
+        this.coordinates = coordinates;
     }
 }
