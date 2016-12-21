@@ -229,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void displayLocation() {
         try {
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            Log.d(TAG, String.valueOf(mLastLocation));
 
             if(mLastLocation != null) {
                 double latitude = mLastLocation.getLatitude();
@@ -274,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onConnected(Bundle arg0) {
-        displayLocation();
+        //displayLocation();
     }
 
     @Override
