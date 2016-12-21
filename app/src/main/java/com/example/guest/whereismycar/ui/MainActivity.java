@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -34,6 +35,7 @@ import com.example.guest.whereismycar.Constants;
 import com.example.guest.whereismycar.Manifest;
 import com.example.guest.whereismycar.R;
 import com.example.guest.whereismycar.models.Vehicle;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -44,7 +46,7 @@ import java.io.ByteArrayOutputStream;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     @Bind(R.id.saveVehicleButton) Button mSaveVehicleButton;
     @Bind(R.id.vehicleLocationButton) Button mVehicleLocationButton;
     @Bind(R.id.vehicleNameEditText) EditText mVehicleNameEditText;
@@ -205,4 +207,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String imageEncoded = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
         mVehicleImage = imageEncoded;
     }
+
 }
