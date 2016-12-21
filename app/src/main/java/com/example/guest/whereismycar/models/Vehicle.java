@@ -14,7 +14,7 @@ public class Vehicle {
         this.vehicleName = vehicleName;
         this.vehicleDescription = vehicleDescription;
         this.vehicleImage = vehicleImage;
-        this.coordinates = "not_specified";
+        this.coordinates = coordinates;
     }
 
     public Vehicle() {}
