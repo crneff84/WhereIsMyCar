@@ -13,7 +13,7 @@ public class Vehicle {
     public Vehicle(String vehicleName, String vehicleDescription, String vehicleImage, String coordinates) {
         this.vehicleName = vehicleName;
         this.vehicleDescription = vehicleDescription;
-        this.vehicleImage = "not_specified";
+        this.vehicleImage = vehicleImage;
         this.coordinates = "not_specified";
     }
 
