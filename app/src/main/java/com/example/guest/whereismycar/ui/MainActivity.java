@@ -114,7 +114,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         if(view == mVehicleLocationButton) {
-
+            Intent intent = new Intent(MainActivity.this, VehiclesActivity.class);
+            startActivity(intent);
         }
     }
 
