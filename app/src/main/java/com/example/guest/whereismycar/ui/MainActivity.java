@@ -36,8 +36,11 @@ import com.example.guest.whereismycar.Constants;
 import com.example.guest.whereismycar.Manifest;
 import com.example.guest.whereismycar.R;
 import com.example.guest.whereismycar.models.Vehicle;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -126,6 +129,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
 
+        if(view == mUpdateLocationButton) {
+            displayLocation();
+        }
+
         if(view == mSaveVehicleButton) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             String uid = user.getUid();
@@ -184,7 +191,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
+        if(mGoogleApiClient!=null) {
+            mGoogleApiClient.connect();
+        }
     }
+
+//    @Override
+//    protected void OnResume() {
+//        super.onResume();
+//        checkPlayServices();
+//    }
 
     @Override
     public void onStop() {
@@ -210,4 +226,59 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mVehicleImage = imageEncoded;
     }
 
+    public void displayLocation() {
+        try {
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+            if(mLastLocation != null) {
+                double latitude = mLastLocation.getLatitude();
+                double longitude = mLastLocation.getLongitude();
+
+                mLocationTextView.setText(latitude + "," + longitude);
+            } else {
+                mLocationTextView.setText("Unable to Find Location");
+            }
+        } catch (SecurityException e) {
+            Toast.makeText(getApplicationContext(), "Location Services Must Be Activated in Settings", Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if(resultCode != ConnectionResult.SUCCESS) {
+            if(GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this, PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "This Device is not Supported", Toast.LENGTH_LONG).show();
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = "
+                + result.getErrorCode());
+    }
+
+    @Override
+    public void onConnected(Bundle arg0) {
+        displayLocation();
+    }
+
+    @Override
+    public void onConnectionSuspended(int arg0) {
+        mGoogleApiClient.connect();
+    }
 }
