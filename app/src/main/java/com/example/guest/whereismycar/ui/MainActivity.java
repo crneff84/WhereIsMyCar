@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
@@ -36,6 +37,7 @@ import com.example.guest.whereismycar.Manifest;
 import com.example.guest.whereismycar.R;
 import com.example.guest.whereismycar.models.Vehicle;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -55,6 +57,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Bind(R.id.vehicleNameTextView) TextView mVehicleNameTextView;
     @Bind(R.id.vehicleDescriptionTextView) TextView mVehicleDescriptionTextView;
     @Bind(R.id.cameraIcon) ImageView mCameraIcon;
+    @Bind(R.id.locationTextView) TextView mLocationTextView;
+    @Bind(R.id.updateLocationButton) Button mUpdateLocationButton;
+
+    private static final String TAG = MainActivity.class.getSimpleName();
+
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
+    private Location mLastLocation;
+    private GoogleApiClient mGoogleApiClient;
+    private boolean mRequestingLocationUpdates = false;
+    private LocationRequest mLocationRequest;
+
+    private static int UPDATE_INTERVAL = 10000;
+    private static int FASTEST_INTERVAL = 5000;
+    private static int DISPLACEMENT = 10;
 
     private Vehicle mVehicle;
     private static final int REQUEST_IMAGE_CAPTURE = 111;
@@ -79,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mVehicleNameTextView.setTypeface(captureFont);
         mVehicleDescriptionTextView.setTypeface(captureFont);
 
+        mUpdateLocationButton.setOnClickListener(this);
         mSaveVehicleButton.setOnClickListener(this);
         mVehicleLocationButton.setOnClickListener(this);
         mCameraIcon.setOnClickListener(this);
@@ -95,7 +112,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         };
-        isLocationEnabled(MainActivity.this);
+
+        if (checkPlayServices()) {
+            buildGoogleApiClient();
+        }
+
     }
 
     @Override
@@ -149,25 +170,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public static boolean isLocationEnabled(Context context) {
-        int locationMode = 0;
-        String locationProviders;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-            try {
-                locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
-            } catch (Settings.SettingNotFoundException e) {
-                e.printStackTrace();
-                return false;
-            }
-            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
-
-        }else{
-            locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
-            return !TextUtils.isEmpty(locationProviders);
-        }
     }
 
     private void logout() {
