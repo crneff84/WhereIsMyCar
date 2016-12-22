@@ -8,10 +8,10 @@ import org.parceler.Parcel;
 
 @Parcel
 public class Vehicle {
-    private String vehicleName;
-    private String vehicleDescription;
-    private String vehicleImage;
-    private String coordinates;
+    String vehicleName;
+    String vehicleDescription;
+    String vehicleImage;
+    String coordinates;
     private String pushId;
 
     public Vehicle(String vehicleName, String vehicleDescription, String vehicleImage, String coordinates) {

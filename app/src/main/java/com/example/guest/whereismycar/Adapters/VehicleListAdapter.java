@@ -1,6 +1,7 @@
 package com.example.guest.whereismycar.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,9 @@ import android.widget.TextView;
 
 import com.example.guest.whereismycar.R;
 import com.example.guest.whereismycar.models.Vehicle;
+import com.example.guest.whereismycar.ui.VehicleDetailActivity;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -44,7 +48,7 @@ public class VehicleListAdapter extends RecyclerView.Adapter<VehicleListAdapter.
         return mVehicles.size();
     }
 
-    public class VehicleViewHolder extends RecyclerView.ViewHolder {
+    public class VehicleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @Bind(R.id.vehicleNameTextView) TextView mVehicleNameTextView;
         @Bind(R.id.vehicleDescriptionTextView) TextView mVehicleDescriptionTextView;
         @Bind(R.id.vehicleLocationTextView) TextView mVehicleLocationTextView;
@@ -54,6 +58,17 @@ public class VehicleListAdapter extends RecyclerView.Adapter<VehicleListAdapter.
             super(itemView);
             ButterKnife.bind(this, itemView);
             mContext = itemView.getContext();
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int itemPosition = getLayoutPosition();
+            Intent intent = new Intent(mContext, VehicleDetailActivity.class);
+            intent.putExtra("position", itemPosition);
+            intent.putExtra("vehicles", Parcels.wrap(mVehicles));
+            mContext.startActivity(intent);
         }
 
         public void bindVehicle(Vehicle vehicle) {

@@ -2,7 +2,7 @@ package com.example.guest.whereismycar.ui;
 
 
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +18,6 @@ import org.parceler.Parcels;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class VehicleDetailFragment extends Fragment {
     @Bind(R.id.vehicleImageView) ImageView mVehicleImageView;
     @Bind(R.id.vehicleNameTextView) TextView mVehicleNameTextView;
