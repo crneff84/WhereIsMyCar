@@ -1,8 +1,12 @@
 package com.example.guest.whereismycar.models;
 
+import org.parceler.Parcel;
+
 /**
  * Created by Guest on 12/20/16.
  */
+
+@Parcel
 public class Vehicle {
     private String vehicleName;
     private String vehicleDescription;
