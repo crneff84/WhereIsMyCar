@@ -7,8 +7,8 @@
     <ImageView
         android:layout_width="130dp"
         android:layout_height="100dp"
-        android:id="@+id/restaurantImageView"
-        android:src="@drawable/Car_Inferno"
+        android:id="@+id/vehicleImageView"
+        android:src="@drawable/car"
         android:scaleType="centerCrop"/>
 
     <LinearLayout
