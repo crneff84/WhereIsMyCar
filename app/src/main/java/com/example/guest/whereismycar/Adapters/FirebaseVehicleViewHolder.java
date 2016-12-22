@@ -71,7 +71,7 @@ public class FirebaseVehicleViewHolder extends RecyclerView.ViewHolder implement
                 int itemPosition = getLayoutPosition();
 
                 Intent intent = new Intent(mContext, VehicleDetailActivity.class);
-                intent.putExtra("position", itemPosition + "");
+                intent.putExtra("position", itemPosition);
                 intent.putExtra("vehicles", Parcels.wrap(vehicles));
 
                 mContext.startActivity(intent);
