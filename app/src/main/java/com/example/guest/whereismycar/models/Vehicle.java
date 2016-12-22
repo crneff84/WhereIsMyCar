@@ -9,6 +9,7 @@ public class Vehicle {
     String vehicleDescription;
     String vehicleImage;
     String coordinates;
+    String index;
     private String pushId;
 
     public Vehicle(String vehicleName, String vehicleDescription, String vehicleImage, String coordinates) {
@@ -16,6 +17,7 @@ public class Vehicle {
         this.vehicleDescription = vehicleDescription;
         this.vehicleImage = vehicleImage;
         this.coordinates = coordinates;
+        this.index = "not_specified";
     }
 
     public Vehicle() {}
@@ -50,5 +52,13 @@ public class Vehicle {
 
     public void setCoordinates(String coordinates) {
         this.coordinates = coordinates;
+    }
+
+    public String getIndex() {
+        return index;
+    }
+
+    public void setIndex(String index) {
+        this.index = index;
     }
 }

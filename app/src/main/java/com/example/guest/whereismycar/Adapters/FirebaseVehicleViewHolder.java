@@ -27,25 +27,27 @@ import butterknife.Bind;
 /**
  * Created by Guest on 12/22/16.
  */
-public class FirebaseVehicleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class FirebaseVehicleViewHolder extends RecyclerView.ViewHolder {
     private static final int MAX_WIDTH = 200;
     private static final int MAX_HEIGHT = 200;
 
     View mView;
     Context mContext;
+    public ImageView mVehicleImageView;
 
     public FirebaseVehicleViewHolder(View itemView) {
         super(itemView);
         mView = itemView;
         mContext = itemView.getContext();
-        itemView.setOnClickListener(this);
+//        itemView.setOnClickListener(this);
     }
 
     public void bindVehicle(Vehicle vehicle) {
-        ImageView vehicleImageView = (ImageView) mView.findViewById(R.id.vehicleImageView);
+        mVehicleImageView = (ImageView) mView.findViewById(R.id.vehicleImageView);
         TextView vehicleNameTextView = (TextView) mView.findViewById(R.id.vehicleNameTextView);
         TextView vehicleDescriptionTextView = (TextView) mView.findViewById(R.id.vehicleDescriptionTextView);
         TextView vehicleLocationTextView = (TextView) mView.findViewById(R.id.vehicleLocationTextView);
+
 
 //        Picasso.with(mContext)
 //                .load(vehicle.getImageUrl())
@@ -58,29 +60,29 @@ public class FirebaseVehicleViewHolder extends RecyclerView.ViewHolder implement
         vehicleLocationTextView.setText(vehicle.getCoordinates());
     }
 
-    public void onClick(View view) {
-        final ArrayList<Vehicle> vehicles = new ArrayList<>();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference(Constants.FIREBASE_CHILD_VEHICLES);
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot snapshot: dataSnapshot.getChildren()) {
-                    vehicles.add(snapshot.getValue(Vehicle.class));
-                }
-
-                int itemPosition = getLayoutPosition();
-
-                Intent intent = new Intent(mContext, VehicleDetailActivity.class);
-                intent.putExtra("position", itemPosition);
-                intent.putExtra("vehicles", Parcels.wrap(vehicles));
-
-                mContext.startActivity(intent);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
+//    public void onClick(View view) {
+//        final ArrayList<Vehicle> vehicles = new ArrayList<>();
+//        DatabaseReference ref = FirebaseDatabase.getInstance().getReference(Constants.FIREBASE_CHILD_VEHICLES);
+//        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for(DataSnapshot snapshot: dataSnapshot.getChildren()) {
+//                    vehicles.add(snapshot.getValue(Vehicle.class));
+//                }
+//
+//                int itemPosition = getLayoutPosition();
+//
+//                Intent intent = new Intent(mContext, VehicleDetailActivity.class);
+//                intent.putExtra("position", itemPosition);
+//                intent.putExtra("vehicles", Parcels.wrap(vehicles));
+//
+//                mContext.startActivity(intent);
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//    }
 }
