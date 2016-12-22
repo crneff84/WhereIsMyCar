@@ -57,7 +57,6 @@ public class FirebaseVehicleViewHolder extends RecyclerView.ViewHolder {
 
         vehicleNameTextView.setText(vehicle.getVehicleName());
         vehicleDescriptionTextView.setText(vehicle.getVehicleDescription());
-        vehicleLocationTextView.setText(vehicle.getCoordinates());
     }
 
 //    public void onClick(View view) {

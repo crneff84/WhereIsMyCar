@@ -23,14 +23,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class FirebaseVehicleListAdapter extends FirebaseRecyclerAdapter<Vehicle, FirebaseVehicleViewHolder> implements ItemTouchHelperAdapter {
-    private ChildEventListener mChildEventListener;
-    private ArrayList<Vehicle> mVehicles = new ArrayList<>();
 
     private DatabaseReference mRef;
+    private ChildEventListener mChildEventListener;
     private OnStartDragListener mOnStartDragListener;
+
     private Context mContext;
+    private ArrayList<Vehicle> mVehicles = new ArrayList<>();
 
     public FirebaseVehicleListAdapter(Class<Vehicle> modelClass, int modelLayout, Class<FirebaseVehicleViewHolder> viewHolderClass, Query ref, OnStartDragListener onStartDragListener, Context context) {
+
         super(modelClass, modelLayout, viewHolderClass, ref);
         mRef = ref.getRef();
         mOnStartDragListener = onStartDragListener;
@@ -68,7 +70,9 @@ public class FirebaseVehicleListAdapter extends FirebaseRecyclerAdapter<Vehicle,
     @Override
     protected void populateViewHolder(final FirebaseVehicleViewHolder viewHolder, Vehicle model, int position) {
         viewHolder.bindVehicle(model);
+
         viewHolder.mVehicleImageView.setOnTouchListener(new View.OnTouchListener(){
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
@@ -79,6 +83,7 @@ public class FirebaseVehicleListAdapter extends FirebaseRecyclerAdapter<Vehicle,
         });
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener(){
+
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, VehicleDetailActivity.class);

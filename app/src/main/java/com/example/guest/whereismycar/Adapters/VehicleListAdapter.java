@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-/**
- * Created by Guest on 12/22/16.
- */
 public class VehicleListAdapter extends RecyclerView.Adapter<VehicleListAdapter.VehicleViewHolder> {
+    private static final int MAX_WIDTH = 200;
+    private static final int MAX_HEIGHT = 200;
+
     private ArrayList<Vehicle> mVehicles = new ArrayList<>();
     private Context mContext;
 
@@ -57,14 +57,15 @@ public class VehicleListAdapter extends RecyclerView.Adapter<VehicleListAdapter.
         public VehicleViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            mContext = itemView.getContext();
 
+            mContext = itemView.getContext();
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
             int itemPosition = getLayoutPosition();
+
             Intent intent = new Intent(mContext, VehicleDetailActivity.class);
             intent.putExtra("position", itemPosition);
             intent.putExtra("vehicles", Parcels.wrap(mVehicles));
