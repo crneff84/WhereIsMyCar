@@ -1,8 +1,12 @@
 package com.example.guest.whereismycar.ui;
 
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.graphics.BitmapCompat;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +18,8 @@ import com.example.guest.whereismycar.models.Vehicle;
 import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
+
+import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -46,11 +52,23 @@ public class VehicleDetailFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_vehicle_detail, container, false);
         ButterKnife.bind(this, view);
 
+        try{
+            Bitmap image = decodeFromFirebaseBase64(mVehicle.getVehicleImage());
+            mVehicleImageView.setImageBitmap(image);
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
         mVehicleNameTextView.setText(mVehicle.getVehicleName());
         mVehicleDescriptionTextView.setText(mVehicle.getVehicleDescription());
         mVehicleLocationTextView.setText(mVehicle.getCoordinates());
 
         return view;
+    }
+
+    public static Bitmap decodeFromFirebaseBase64(String image) throws IOException {
+        byte[] decodedByteArray = android.util.Base64.decode(image, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.length);
     }
 
 }

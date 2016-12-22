@@ -2,7 +2,10 @@ package com.example.guest.whereismycar.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,6 +23,7 @@ import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import butterknife.Bind;
@@ -48,15 +52,20 @@ public class FirebaseVehicleViewHolder extends RecyclerView.ViewHolder {
         TextView vehicleDescriptionTextView = (TextView) mView.findViewById(R.id.vehicleDescriptionTextView);
         TextView vehicleLocationTextView = (TextView) mView.findViewById(R.id.vehicleLocationTextView);
 
-
-//        Picasso.with(mContext)
-//                .load(vehicle.getImageUrl())
-//                .resize(MAX_WIDTH, MAX_HEIGHT)
-//                .centerCrop()
-//                .into(vehicleImageView);
+        try{
+            Bitmap imageBitmap = decodeFromFirebaseBase64(vehicle.getVehicleImage());
+            mVehicleImageView.setImageBitmap(imageBitmap);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         vehicleNameTextView.setText(vehicle.getVehicleName());
         vehicleDescriptionTextView.setText(vehicle.getVehicleDescription());
+    }
+
+    public static Bitmap decodeFromFirebaseBase64(String image) throws IOException {
+        byte[] decodedByteArray = android.util.Base64.decode(image, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.length);
     }
 
 //    public void onClick(View view) {
