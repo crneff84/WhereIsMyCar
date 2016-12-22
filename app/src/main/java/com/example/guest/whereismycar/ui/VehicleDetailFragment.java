@@ -1,8 +1,10 @@
 package com.example.guest.whereismycar.ui;
 
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.BitmapCompat;
@@ -24,7 +26,7 @@ import java.io.IOException;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class VehicleDetailFragment extends Fragment {
+public class VehicleDetailFragment extends Fragment  implements View.OnClickListener{
     @Bind(R.id.vehicleImageView) ImageView mVehicleImageView;
     @Bind(R.id.vehicleNameTextView) TextView mVehicleNameTextView;
     @Bind(R.id.vehicleDescriptionTextView) TextView mVehicleDescriptionTextView;
@@ -45,6 +47,19 @@ public class VehicleDetailFragment extends Fragment {
         mVehicle = Parcels.unwrap(getArguments().getParcelable("vehicle"));
     }
 
+    @Override
+    public void onClick(View view) {
+        if(view == mVehicleLocationTextView) {
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("geo:<" + mVehicle.getLatitude()
+                    + ">,<" + mVehicle.getLongitude()
+                    + ">?q=<" + mVehicle.getLatitude()
+                    + ">,<" + mVehicle.getLongitude()
+                    + ">(My Vehicle)"));
+            startActivity(mapIntent);
+        }
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,6 +77,8 @@ public class VehicleDetailFragment extends Fragment {
         mVehicleNameTextView.setText(mVehicle.getVehicleName());
         mVehicleDescriptionTextView.setText(mVehicle.getVehicleDescription());
         mVehicleLocationTextView.setText(mVehicle.getCoordinates());
+
+        mVehicleLocationTextView.setOnClickListener(this);
 
         return view;
     }

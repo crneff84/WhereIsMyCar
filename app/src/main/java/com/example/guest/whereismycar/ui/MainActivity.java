@@ -39,6 +39,7 @@ import com.example.guest.whereismycar.models.Vehicle;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.server.converter.StringToIntConverter;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
@@ -69,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int REQUEST_IMAGE_CAPTURE = 111;
     private String mVehicleImage = "";
     private String mCoordinates = "";
+    private String mLatitude;
+    private String mLongitude;
 
     private LocationManager mLocationManager;
     private LocationListener mLocationListener;
@@ -130,6 +133,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void onLocationChanged(Location location) {
                     mLocation = location;
+                    mLatitude = String.valueOf(location.getLatitude());
+                    mLongitude = String.valueOf(location.getLongitude());
                     mCoordinates = ("Lat:" + location.getLatitude() + ", Long:" + location.getLongitude());
                     mLocationTextView.setText(mCoordinates);
                 }
@@ -159,6 +164,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String vehicleDescription = mVehicleDescriptionEditText.getText().toString();
             String vehicleImage = mVehicleImage;
             String coordinates = mCoordinates;
+            String latitude = mLatitude;
+            String longitude = mLongitude;
 
             boolean validName = isValidName(vehicleName);
             boolean validDescription = isValidDescription(vehicleDescription);
@@ -168,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             if (!validName || !validDescription || !validImage || !validLocation) return;
 
-            mVehicle = new Vehicle(vehicleName, vehicleDescription, vehicleImage, coordinates);
+            mVehicle = new Vehicle(vehicleName, vehicleDescription, vehicleImage, coordinates, latitude, longitude);
 
             DatabaseReference vehicleRef = FirebaseDatabase
                     .getInstance()
