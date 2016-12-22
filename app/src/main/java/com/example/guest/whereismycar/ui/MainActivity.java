@@ -71,9 +71,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean mRequestingLocationUpdates = false;
     private LocationRequest mLocationRequest;
 
-    private static int UPDATE_INTERVAL = 10000;
-    private static int FASTEST_INTERVAL = 5000;
-    private static int DISPLACEMENT = 10;
 
     private Vehicle mVehicle;
     private static final int REQUEST_IMAGE_CAPTURE = 111;
@@ -92,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Typeface captureFont = Typeface.createFromAsset(getAssets(), "fonts/Capture_it.ttf");
         mSaveVehicleButton.setTypeface(captureFont);
         mVehicleLocationButton.setTypeface(captureFont);
+        mUpdateLocationButton.setTypeface(captureFont);
         mVehicleNameEditText.setTypeface(captureFont);
         mVehicleDescriptionEditText.setTypeface(captureFont);
         mImageTextView.setTypeface(captureFont);
