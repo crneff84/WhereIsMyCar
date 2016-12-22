@@ -88,7 +88,7 @@ public class FirebaseVehicleListAdapter extends FirebaseRecyclerAdapter<Vehicle,
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, VehicleDetailActivity.class);
                 intent.putExtra("position", viewHolder.getAdapterPosition());
-                intent.putExtra("restaurants", Parcels.wrap(mVehicles));
+                intent.putExtra("vehicles", Parcels.wrap(mVehicles));
                 mContext.startActivity(intent);
             }
         });

@@ -30,7 +30,7 @@ import butterknife.ButterKnife;
 
 public class VehiclesActivity extends AppCompatActivity implements OnStartDragListener{
     //private DatabaseReference mVehicleReference;
-    private FirebaseRecyclerAdapter mFirebaseAdapter;
+    private FirebaseVehicleListAdapter mFirebaseAdapter;
     private ItemTouchHelper mItemTouchHelper;
 
     @Bind(R.id.recyclerView) RecyclerView mRecyclerView;

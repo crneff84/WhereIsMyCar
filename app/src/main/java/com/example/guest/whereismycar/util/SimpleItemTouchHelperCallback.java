@@ -3,6 +3,8 @@ package com.example.guest.whereismycar.util;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+
 /**
  * Created by Guest on 12/22/16.
  */
