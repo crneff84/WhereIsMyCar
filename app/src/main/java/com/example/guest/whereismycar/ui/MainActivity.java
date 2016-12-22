@@ -68,7 +68,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Vehicle mVehicle;
     private static final int REQUEST_IMAGE_CAPTURE = 111;
     private String mVehicleImage = "";
+
     private String mCoordinates = "";
+
+    private LocationManager mLocationManager;
+    private LocationListener mLocationListener;
+    private Location mLocation;
+    private String mLocationProvider;
+    private Location mLastLocation;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -94,6 +101,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mVehicleLocationButton.setOnClickListener(this);
         mCameraIcon.setOnClickListener(this);
 
+        mLocationProvider = LocationManager.GPS_PROVIDER;
+        mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -106,8 +116,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         };
-
     }
+
 
     @Override
     public void onClick(View view) {
@@ -117,7 +127,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         if(view == mUpdateLocationButton) {
+            mLocationListener = new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    mLocation = location;
+                    mCoordinates = ("Lat:" + location.getLatitude() + ", Long:" + location.getLongitude());
+                    mLocationTextView.setText(mCoordinates);
+                    Log.d("LOCATION!", mLocation.toString());
+                }
 
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+
+                }
+            };
+
+            if(ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,mLocationListener);
+                mLastLocation = mLocationManager.getLastKnownLocation(mLocationProvider);
+            } else {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[] {android.Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            }
         }
 
         if(view == mSaveVehicleButton) {
@@ -146,6 +186,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(view == mVehicleLocationButton) {
             Intent intent = new Intent(MainActivity.this, VehiclesActivity.class);
             startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch(requestCode) {
+            case 0: {
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)  {
+                    if(ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+                        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mLocationListener);
+                        mLastLocation = mLocationManager.getLastKnownLocation(mLocationProvider);
+                    }
+                } else {
+
+                }
+                break;
+            }
         }
     }
 
