@@ -51,7 +51,7 @@ import java.io.ByteArrayOutputStream;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     @Bind(R.id.saveVehicleButton) Button mSaveVehicleButton;
     @Bind(R.id.vehicleLocationButton) Button mVehicleLocationButton;
     @Bind(R.id.vehicleNameEditText) EditText mVehicleNameEditText;
@@ -64,13 +64,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Bind(R.id.updateLocationButton) Button mUpdateLocationButton;
 
     private static final String TAG = MainActivity.class.getSimpleName();
-
-    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
-    private Location mLastLocation;
-    private GoogleApiClient mGoogleApiClient;
-    private boolean mRequestingLocationUpdates = false;
-    private LocationRequest mLocationRequest;
-
 
     private Vehicle mVehicle;
     private static final int REQUEST_IMAGE_CAPTURE = 111;
@@ -114,10 +107,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
 
-        if (checkPlayServices()) {
-            buildGoogleApiClient();
-        }
-
     }
 
     @Override
@@ -128,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         if(view == mUpdateLocationButton) {
-            displayLocation();
+
         }
 
         if(view == mSaveVehicleButton) {
@@ -189,16 +178,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
-        if(mGoogleApiClient!=null) {
-            mGoogleApiClient.connect();
-        }
     }
-
-//    @Override
-//    protected void OnResume() {
-//        super.onResume();
-//        checkPlayServices();
-//    }
 
     @Override
     public void onStop() {
@@ -222,62 +202,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         String imageEncoded = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
         mVehicleImage = imageEncoded;
-    }
-
-    public void displayLocation() {
-        try {
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            Log.d(TAG, String.valueOf(mLastLocation));
-
-            if(mLastLocation != null) {
-                double latitude = mLastLocation.getLatitude();
-                double longitude = mLastLocation.getLongitude();
-
-                mLocationTextView.setText(latitude + "," + longitude);
-            } else {
-                mLocationTextView.setText("Unable to Find Location");
-            }
-        } catch (SecurityException e) {
-            Toast.makeText(getApplicationContext(), "Location Services Must Be Activated in Settings", Toast.LENGTH_LONG).show();
-        }
-
-    }
-
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-    }
-
-    private boolean checkPlayServices() {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        if(resultCode != ConnectionResult.SUCCESS) {
-            if(GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, this, PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            } else {
-                Toast.makeText(getApplicationContext(), "This Device is not Supported", Toast.LENGTH_LONG).show();
-                finish();
-            }
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult result) {
-        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = "
-                + result.getErrorCode());
-    }
-
-    @Override
-    public void onConnected(Bundle arg0) {
-        //displayLocation();
-    }
-
-    @Override
-    public void onConnectionSuspended(int arg0) {
-        mGoogleApiClient.connect();
     }
 }
