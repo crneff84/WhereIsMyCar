@@ -3,6 +3,7 @@ package com.example.guest.whereismycar.ui;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
@@ -39,6 +40,7 @@ import com.example.guest.whereismycar.models.Vehicle;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
@@ -65,12 +67,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
-    private Location mLastLocation;
     private GoogleApiClient mGoogleApiClient;
-    private boolean mRequestingLocationUpdates = false;
     private LocationRequest mLocationRequest;
-
+    static final Integer LOCATION = 1;
+    private FusedLocationProviderApi mFusedLocationProviderApi;
+    private String mLatitude;
+    private String mLongitude;
+    private boolean locationUpdated;
+    private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor mEditor;
 
     private Vehicle mVehicle;
     private static final int REQUEST_IMAGE_CAPTURE = 111;
@@ -101,6 +106,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mVehicleLocationButton.setOnClickListener(this);
         mCameraIcon.setOnClickListener(this);
 
+        locationUpdated = false;
+
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -113,11 +120,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         };
-
-        if (checkPlayServices()) {
-            buildGoogleApiClient();
-        }
-
     }
 
     @Override
@@ -128,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         if(view == mUpdateLocationButton) {
-            displayLocation();
+            findLocation();
         }
 
         if(view == mSaveVehicleButton) {
@@ -187,11 +189,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onStart() {
-        super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
         if(mGoogleApiClient!=null) {
             mGoogleApiClient.connect();
         }
+        super.onStart();
     }
 
 //    @Override
@@ -202,10 +204,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onStop() {
-        super.onStop();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+        }
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+        super.onStop();
     }
 
     @Override
@@ -224,60 +229,70 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mVehicleImage = imageEncoded;
     }
 
-    public void displayLocation() {
-        try {
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            Log.d(TAG, String.valueOf(mLastLocation));
-
-            if(mLastLocation != null) {
-                double latitude = mLastLocation.getLatitude();
-                double longitude = mLastLocation.getLongitude();
-
-                mLocationTextView.setText(latitude + "," + longitude);
-            } else {
-                mLocationTextView.setText("Unable to Find Location");
+    public void findLocation(){
+        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            askForPermission(android.Manifest.permission.ACCESS_FINE_LOCATION,LOCATION);
+        } else {
+            mLocationRequest = mLocationRequest.create();
+            mLocationRequest.setPriority(mLocationRequest.PRIORITY_HIGH_ACCURACY);
+            mFusedLocationProviderApi = LocationServices.FusedLocationApi;
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(LocationServices.API)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+            if (mGoogleApiClient != null) {
+                mGoogleApiClient.connect();
             }
-        } catch (SecurityException e) {
-            Toast.makeText(getApplicationContext(), "Location Services Must Be Activated in Settings", Toast.LENGTH_LONG).show();
         }
-
-    }
-
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-    }
-
-    private boolean checkPlayServices() {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        if(resultCode != ConnectionResult.SUCCESS) {
-            if(GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, this, PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            } else {
-                Toast.makeText(getApplicationContext(), "This Device is not Supported", Toast.LENGTH_LONG).show();
-                finish();
+        if (locationUpdated == false){
+            if (mSharedPreferences.getString(Constants.PREFERENCES_LATITUDE_KEY, null) !=null && mSharedPreferences.getString(Constants.PREFERENCES_LONGITUDE_KEY, null)!= null){
+//                TODO this oughtta be a callback!
+                mLatitude = mSharedPreferences.getString(Constants.PREFERENCES_LATITUDE_KEY, null);
+                mLongitude = mSharedPreferences.getString(Constants.PREFERENCES_LONGITUDE_KEY, null);
+                mLocationTextView.setText("Latitude: " + mLatitude + "Longitude: " + mLongitude);
             }
-            return false;
         }
-        return true;
+    }
+
+    public void askForPermission(String permission, Integer requestCode) {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, permission)) {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission}, requestCode);
+            } else {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission}, requestCode);
+            }
+        } else {
+            Toast.makeText(MainActivity.this, "" + permission + " is already granted.", Toast.LENGTH_SHORT).show();
+        }
+        findLocation();
+    }
+
+//    public void onLocationChanged(Location location) {
+//        mLatitude = String.valueOf(location.getLatitude());
+//        mLongitude = String.valueOf(location.getLongitude());
+//        mEditor.putString(Constants.PREFERENCES_LATITUDE_KEY, mLatitude).apply();
+//        mEditor.putString(Constants.PREFERENCES_LONGITUDE_KEY, mLongitude).apply();
+//        mLocationTextView.setText("Latitude: " + mLatitude + "Longitude: " + mLongitude);
+//        locationUpdated = true;
+//    }
+
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationProviderApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
+        }
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult result) {
-        Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = "
-                + result.getErrorCode());
+    public void onConnectionSuspended(int i){
+
     }
 
     @Override
-    public void onConnected(Bundle arg0) {
-        //displayLocation();
-    }
+    public void onConnectionFailed(ConnectionResult connectionResult){
 
-    @Override
-    public void onConnectionSuspended(int arg0) {
-        mGoogleApiClient.connect();
     }
 }
