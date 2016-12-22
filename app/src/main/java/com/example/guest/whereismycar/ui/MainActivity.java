@@ -68,7 +68,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Vehicle mVehicle;
     private static final int REQUEST_IMAGE_CAPTURE = 111;
     private String mVehicleImage = "";
-
     private String mCoordinates = "";
 
     private LocationManager mLocationManager;
@@ -160,6 +159,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String vehicleDescription = mVehicleDescriptionEditText.getText().toString();
             String vehicleImage = mVehicleImage;
             String coordinates = mCoordinates;
+
+            boolean validName = isValidName(vehicleName);
+            boolean validDescription = isValidDescription(vehicleDescription);
+            boolean validImage = isValidImage(vehicleImage);
+            boolean validLocation = isValidLocation(coordinates);
+
+
+            if (!validName || !validDescription || !validImage || !validLocation) return;
 
             mVehicle = new Vehicle(vehicleName, vehicleDescription, vehicleImage, coordinates);
 
@@ -254,4 +261,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String imageEncoded = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
         mVehicleImage = imageEncoded;
     }
+
+    private boolean isValidName(String vehicleName) {
+        if(vehicleName.equals("")) {
+            mVehicleNameEditText.setError("Enter a Vehicle Name");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isValidDescription(String vehicleDescription) {
+        if(vehicleDescription.equals("")) {
+            mVehicleDescriptionEditText.setError("Enter a Vehicle Description");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isValidImage(String vehicleImage) {
+        if(vehicleImage.equals("")) {
+            Toast.makeText(MainActivity.this, "Take a Picture of Your Location", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isValidLocation(String coordinates) {
+        if(coordinates.equals("")) {
+            Toast.makeText(MainActivity.this, "Update Your Location", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
+    }
+
+
 }
