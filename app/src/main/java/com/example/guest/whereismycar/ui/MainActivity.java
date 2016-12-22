@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mVehicleLocationButton.setOnClickListener(this);
         mCameraIcon.setOnClickListener(this);
 
-        mLocationProvider = LocationManager.GPS_PROVIDER;
+        mLocationProvider = LocationManager.NETWORK_PROVIDER;
         mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
         mAuth = FirebaseAuth.getInstance();
@@ -133,27 +133,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mLocation = location;
                     mCoordinates = ("Lat:" + location.getLatitude() + ", Long:" + location.getLongitude());
                     mLocationTextView.setText(mCoordinates);
-                    Log.d("LOCATION!", mLocation.toString());
                 }
 
                 @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                }
+                public void onStatusChanged(String provider, int status, Bundle extras) {}
 
                 @Override
-                public void onProviderEnabled(String provider) {
-
-                }
+                public void onProviderEnabled(String provider) {}
 
                 @Override
-                public void onProviderDisabled(String provider) {
-
-                }
+                public void onProviderDisabled(String provider) {}
             };
 
             if(ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,mLocationListener);
+                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,0,0,mLocationListener);
                 mLastLocation = mLocationManager.getLastKnownLocation(mLocationProvider);
             } else {
                 ActivityCompat.requestPermissions(MainActivity.this, new String[] {android.Manifest.permission.ACCESS_FINE_LOCATION}, 0);
